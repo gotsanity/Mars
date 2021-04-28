@@ -1,0 +1,12 @@
+﻿@model IEnumerable<BlogPost>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the blog.</h1>
+    @foreach (BlogPost post in Model)
+    {
+        <p>@post.Title</p>
+    }
+</div>
