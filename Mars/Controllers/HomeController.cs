@@ -28,6 +28,13 @@ namespace Mars.Controllers
             return View(posts);
         }
 
+        public IActionResult Detail(int id)
+        {
+            BlogPost post = _ctx.Posts.Find(id);
+
+            return View(post);
+        }
+
         public IActionResult Privacy()
         {
             return View();

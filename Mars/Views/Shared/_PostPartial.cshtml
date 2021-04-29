@@ -1,0 +1,14 @@
+﻿@model BlogPost
+
+@{
+    
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <h6 class="card-subtitle mb-2 text-muted">@Model.AuthorId</h6>
+        <p class="card-text">@Model.Body.Substring(0, Math.Min(150, Model.Body.Length))</p>
+        <a class="card-link" asp-area="" asp-controller="Home" asp-action="Detail" asp-route-id="@Model.BlogPostID">Details</a>
+    </div>
+</div>
