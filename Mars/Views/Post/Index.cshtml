@@ -28,7 +28,7 @@
                 @Html.DisplayNameFor(model => model.CategoryId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AuthorId)
+                @Html.DisplayNameFor(model => model.UserId)
             </th>
             <th></th>
         </tr>
@@ -52,7 +52,7 @@
                 @Html.DisplayFor(modelItem => item.CategoryId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AuthorId)
+                @Html.DisplayFor(modelItem => item.UserId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.BlogPostID">Edit</a> |

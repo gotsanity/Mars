@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Mars.Data;
 using Mars.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mars.Controllers
 {
+    [Authorize]
     public class PostController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public PostController(ApplicationDbContext context)
+        public PostController(ApplicationDbContext context, UserManager<IdentityUser> usr)
         {
             _context = context;
+            _userManager = usr;
         }
 
         // GET: Post
@@ -44,9 +49,16 @@ namespace Mars.Controllers
         }
 
         // GET: Post/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            BlogPost blog = new BlogPost();
+            blog.User = user;
+            blog.UserId = user.Id;
+
+            TempData["userid"] = user.Id;
+
+            return View(blog);
         }
 
         // POST: Post/Create
@@ -54,7 +66,7 @@ namespace Mars.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BlogPostID,Title,Body,PostedOn,EditedOn,CategoryId,AuthorId")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("BlogPostID,Title,Body,PostedOn,EditedOn,CategoryId,UserId")] BlogPost blogPost)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +98,7 @@ namespace Mars.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BlogPostID,Title,Body,PostedOn,EditedOn,CategoryId,AuthorId")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("BlogPostID,Title,Body,PostedOn,EditedOn,CategoryId,UserId")] BlogPost blogPost)
         {
             if (id != blogPost.BlogPostID)
             {

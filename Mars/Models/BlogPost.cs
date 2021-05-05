@@ -20,7 +20,7 @@ namespace Mars.Models
         public virtual int CategoryId { get; set; }
         public virtual List<Category> Categories { get; set; }
 
-        public virtual string AuthorId { get; set; }
+        public virtual string UserId { get; set; }
         public virtual IdentityUser User { get; set; }
     }
 }
