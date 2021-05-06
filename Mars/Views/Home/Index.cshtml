@@ -7,7 +7,7 @@
     <h1 class="display-4">Welcome to the blog.</h1>
 </div>
 
-<div class="card-deck">
+<div class="row">
     @foreach (BlogPost post in Model)
     {
         @Html.Partial("_PostPartial", post);

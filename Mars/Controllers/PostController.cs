@@ -55,6 +55,8 @@ namespace Mars.Controllers
             BlogPost blog = new BlogPost();
             blog.User = user;
             blog.UserId = user.Id;
+            blog.PostedOn = DateTime.Now;
+            blog.EditedOn = DateTime.Now;
 
             TempData["userid"] = user.Id;
 
@@ -85,11 +87,14 @@ namespace Mars.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.Posts.FindAsync(id);
+            var blogPost = await _context.Posts.Include(p => p.User).Where(p => p.BlogPostID == id).FirstOrDefaultAsync();
             if (blogPost == null)
             {
                 return NotFound();
             }
+
+            blogPost.EditedOn = DateTime.Now;
+
             return View(blogPost);
         }
 

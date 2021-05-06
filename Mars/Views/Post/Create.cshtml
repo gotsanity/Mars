@@ -14,6 +14,8 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @Html.HiddenFor(m => m.UserId)
             @Html.HiddenFor(m => m.User)
+            <input type="hidden" asp-for="EditedOn" />
+            <input type="hidden" asp-for="PostedOn" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -23,16 +25,6 @@
                 <label asp-for="Body" class="control-label"></label>
                 <input asp-for="Body" class="form-control" />
                 <span asp-validation-for="Body" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PostedOn" class="control-label"></label>
-                <input asp-for="PostedOn" class="form-control" />
-                <span asp-validation-for="PostedOn" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EditedOn" class="control-label"></label>
-                <input asp-for="EditedOn" class="form-control" />
-                <span asp-validation-for="EditedOn" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>

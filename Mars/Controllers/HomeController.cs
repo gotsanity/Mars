@@ -1,6 +1,7 @@
 ﻿using Mars.Data;
 using Mars.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,14 @@ namespace Mars.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<BlogPost> posts = _ctx.Posts.ToList();
+            IEnumerable<BlogPost> posts = _ctx.Posts.Include(m => m.User).ToList();
 
             return View(posts);
         }
 
         public IActionResult Detail(int id)
         {
-            BlogPost post = _ctx.Posts.Find(id);
+            BlogPost post = _ctx.Posts.Include(m => m.User).Where(p => p.BlogPostID == id).FirstOrDefault();
 
             return View(post);
         }
