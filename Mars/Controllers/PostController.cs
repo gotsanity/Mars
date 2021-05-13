@@ -17,29 +17,33 @@ namespace Mars.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IUnitOfWork _uow;
+        private IBlogPostRepository _repo;
 
-        public PostController(ApplicationDbContext context, UserManager<IdentityUser> usr)
+        public PostController(ApplicationDbContext context, UserManager<IdentityUser> usr, IUnitOfWork unitOfWork, IBlogPostRepository blogPostRespository)
         {
             _context = context;
             _userManager = usr;
+            _uow = unitOfWork;
+            _repo = blogPostRespository;
         }
 
         // GET: Post
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Posts.ToListAsync());
+            return View(_repo.GetAllByUser(_userManager.GetUserId(User)));
         }
 
         // GET: Post/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var blogPost = await _context.Posts
-                .FirstOrDefaultAsync(m => m.BlogPostID == id);
+            var blogPost = _repo.Get(id);
+
             if (blogPost == null)
             {
                 return NotFound();
@@ -72,22 +76,22 @@ namespace Mars.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(blogPost);
-                await _context.SaveChangesAsync();
+                _repo.Add(blogPost);
+                _uow.Complete();
                 return RedirectToAction(nameof(Index));
             }
             return View(blogPost);
         }
 
         // GET: Post/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var blogPost = await _context.Posts.Include(p => p.User).Where(p => p.BlogPostID == id).FirstOrDefaultAsync();
+            var blogPost = _repo.Get(id);
             if (blogPost == null)
             {
                 return NotFound();
@@ -103,46 +107,37 @@ namespace Mars.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BlogPostID,Title,Body,PostedOn,EditedOn,CategoryId,UserId")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("BlogPostID,Title,Body,PostedOn,EditedOn,CategoryId,UserId")] BlogPost model)
         {
-            if (id != blogPost.BlogPostID)
+            if (id != model.BlogPostID)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(blogPost);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BlogPostExists(blogPost.BlogPostID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                BlogPost post = _repo.Get(model.BlogPostID);
+                post.Body = model.Body;
+                post.EditedOn = DateTime.Now;
+                post.Title = model.Title;
+                post.Categories = model.Categories;
+                post.CategoryId = model.CategoryId;
+
+                _uow.Complete();
                 return RedirectToAction(nameof(Index));
             }
-            return View(blogPost);
+            return View(model);
         }
 
         // GET: Post/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var blogPost = await _context.Posts
-                .FirstOrDefaultAsync(m => m.BlogPostID == id);
+            var blogPost = _repo.Get(id);
             if (blogPost == null)
             {
                 return NotFound();
@@ -156,15 +151,15 @@ namespace Mars.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var blogPost = await _context.Posts.FindAsync(id);
-            _context.Posts.Remove(blogPost);
-            await _context.SaveChangesAsync();
+            BlogPost item = _repo.Get(id);
+            _repo.Remove(item);
+            _uow.Complete();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BlogPostExists(int id)
         {
-            return _context.Posts.Any(e => e.BlogPostID == id);
+            return _repo.Get(id) == null;
         }
     }
 }

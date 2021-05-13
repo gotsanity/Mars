@@ -7,7 +7,7 @@ namespace Mars.Data
 {
     public interface IUnitOfWork : IDisposable
     {
-        IBlogPostRespository Posts { get; }
+        IBlogPostRepository Posts { get; }
         int Complete();
     }
 }

@@ -9,7 +9,7 @@ namespace Mars.Data
     {
         private readonly ApplicationDbContext _context;
 
-        public IBlogPostRespository Posts { get; private set; }
+        public IBlogPostRepository Posts { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {

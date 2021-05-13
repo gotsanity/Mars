@@ -17,9 +17,9 @@ namespace Mars.Controllers
         private readonly ApplicationDbContext _ctx;
         private readonly IUnitOfWork _unitOfWork;
 
-        private IBlogPostRespository _repo;
+        private IBlogPostRepository _repo;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext, IBlogPostRespository repository, IUnitOfWork uow)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext, IBlogPostRepository repository, IUnitOfWork uow)
         {
             _logger = logger;
             _ctx = applicationDbContext;
