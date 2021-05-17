@@ -1,4 +1,6 @@
 using Mars.Data;
+using Mars.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,6 +39,17 @@ namespace Mars
 
             services.AddTransient<IBlogPostRepository, BlogPostRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // ownership policy
+            services.AddAuthorization(opts => {
+                opts.AddPolicy("OwnersAndAdmins", policy =>
+                {
+                    policy.AddRequirements(new OwnershipAuthorizationRequirement
+                    {
+                        AllowOwners = true
+                    });
+                });
+            });
 
             services.AddControllersWithViews();
         }

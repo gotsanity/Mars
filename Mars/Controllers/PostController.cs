@@ -19,13 +19,20 @@ namespace Mars.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUnitOfWork _uow;
         private IBlogPostRepository _repo;
+        private IAuthorizationService _authService;
 
-        public PostController(ApplicationDbContext context, UserManager<IdentityUser> usr, IUnitOfWork unitOfWork, IBlogPostRepository blogPostRespository)
+        public PostController(ApplicationDbContext context,
+            UserManager<IdentityUser> usr,
+            IUnitOfWork unitOfWork,
+            IBlogPostRepository blogPostRespository,
+            IAuthorizationService auth
+            )
         {
             _context = context;
             _userManager = usr;
             _uow = unitOfWork;
             _repo = blogPostRespository;
+            _authService = auth;
         }
 
         // GET: Post
@@ -91,15 +98,24 @@ namespace Mars.Controllers
                 return NotFound();
             }
 
-            var blogPost = _repo.Get(id);
+            BlogPost blogPost = _repo.Get(id);
             if (blogPost == null)
             {
                 return NotFound();
             }
 
-            blogPost.EditedOn = DateTime.Now;
+            AuthorizationResult authorized = await _authService.AuthorizeAsync(User, blogPost, "OwnersAndAdmins");
 
-            return View(blogPost);
+            if (authorized.Succeeded)
+            {
+                blogPost.EditedOn = DateTime.Now;
+
+                return View(blogPost);
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
         }
 
         // POST: Post/Edit/5
