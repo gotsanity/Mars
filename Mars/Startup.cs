@@ -40,6 +40,8 @@ namespace Mars
             services.AddTransient<IBlogPostRepository, BlogPostRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddTransient<IAuthorizationHandler, OwnershipAuthorizationHandler>();
+
             // ownership policy
             services.AddAuthorization(opts => {
                 opts.AddPolicy("OwnersAndAdmins", policy =>

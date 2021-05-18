@@ -130,19 +130,28 @@ namespace Mars.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                BlogPost post = _repo.Get(model.BlogPostID);
-                post.Body = model.Body;
-                post.EditedOn = DateTime.Now;
-                post.Title = model.Title;
-                post.Categories = model.Categories;
-                post.CategoryId = model.CategoryId;
+            AuthorizationResult authorized = await _authService.AuthorizeAsync(User, model, "OwnersAndAdmins");
 
-                _uow.Complete();
-                return RedirectToAction(nameof(Index));
+            if (authorized.Succeeded)
+            {
+                if (ModelState.IsValid)
+                {
+                    BlogPost post = _repo.Get(model.BlogPostID);
+                    post.Body = model.Body;
+                    post.EditedOn = DateTime.Now;
+                    post.Title = model.Title;
+                    post.Categories = model.Categories;
+                    post.CategoryId = model.CategoryId;
+
+                    _uow.Complete();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(model);
             }
-            return View(model);
+            else
+            {
+                return new ForbidResult();
+            }
         }
 
         // GET: Post/Delete/5
@@ -154,12 +163,22 @@ namespace Mars.Controllers
             }
 
             var blogPost = _repo.Get(id);
+
             if (blogPost == null)
             {
                 return NotFound();
             }
 
-            return View(blogPost);
+            AuthorizationResult authorized = await _authService.AuthorizeAsync(User, blogPost, "OwnersAndAdmins");
+
+            if (authorized.Succeeded)
+            {
+                return View(blogPost);
+            }
+            else
+            {
+                return new ChallengeResult();
+            }
         }
 
         // POST: Post/Delete/5
@@ -168,9 +187,19 @@ namespace Mars.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             BlogPost item = _repo.Get(id);
-            _repo.Remove(item);
-            _uow.Complete();
-            return RedirectToAction(nameof(Index));
+
+            AuthorizationResult authorized = await _authService.AuthorizeAsync(User, item, "OwnersAndAdmins");
+
+            if (authorized.Succeeded)
+            {
+                _repo.Remove(item);
+                _uow.Complete();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return new ForbidResult();
+            }
         }
 
         private bool BlogPostExists(int id)
