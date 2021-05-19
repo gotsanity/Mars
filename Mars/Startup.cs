@@ -35,6 +35,7 @@ namespace Mars
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<IBlogPostRepository, BlogPostRepository>();
@@ -48,7 +49,8 @@ namespace Mars
                 {
                     policy.AddRequirements(new OwnershipAuthorizationRequirement
                     {
-                        AllowOwners = true
+                        AllowOwners = true,
+                        AllowAdmins = true
                     });
                 });
             });

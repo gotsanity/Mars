@@ -13,6 +13,7 @@ namespace Mars.Infrastructure
     {
         // authorization requirements
         public bool AllowOwners { get; set; }
+        public bool AllowAdmins { get; set; }
     }
 
     public class OwnershipAuthorizationHandler : AuthorizationHandler<OwnershipAuthorizationRequirement>
@@ -35,8 +36,10 @@ namespace Mars.Infrastructure
 
             if (post != null &&
                 userId != null &&
-                (requirement.AllowOwners && post.UserId.Equals(userId, compare))
-            ){
+                (requirement.AllowOwners && post.UserId.Equals(userId, compare)) ||
+                (requirement.AllowAdmins && context.User.IsInRole("Admins"))
+            )
+            {
                 context.Succeed(requirement);
             }
             else
