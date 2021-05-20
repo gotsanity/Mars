@@ -26,6 +26,10 @@
                         </li>
                         <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="categories" asp-action="Index">Categories</a></li>
                         <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="post" asp-action="Index">Posts</a></li>
+                        @if (User?.IsInRole("Admins") ?? false)
+                        {
+                    <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="RoleAdmin" asp-action="Index">Manage Roles</a></li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
