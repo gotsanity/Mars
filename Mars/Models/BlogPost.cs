@@ -17,7 +17,6 @@ namespace Mars.Models
         public DateTime PostedOn { get; set; }
         public DateTime EditedOn { get; set; }
 
-        public virtual int CategoryId { get; set; }
         public virtual List<Category> Categories { get; set; }
 
         public virtual string UserId { get; set; }

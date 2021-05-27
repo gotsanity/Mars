@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Category>
+
+<select id="Categories" name="Categories" class="form-control" multiple>
+    <option value="0" selected>None</option>
+    @if (Model.Count() > 0)
+    {
+        @foreach (Category cat in Model)
+        {
+            @*<option value="@cat.CategoryID">@cat.Name</option>*@
+            <option>@cat.Name</option>
+        }
+    }
+</select>

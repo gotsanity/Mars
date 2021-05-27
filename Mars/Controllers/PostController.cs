@@ -79,7 +79,7 @@ namespace Mars.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BlogPostID,Title,Body,PostedOn,EditedOn,CategoryId,UserId")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("BlogPostID,Title,Body,PostedOn,EditedOn,Categories,UserId")] BlogPost blogPost)
         {
             if (ModelState.IsValid)
             {
@@ -141,7 +141,6 @@ namespace Mars.Controllers
                     post.EditedOn = DateTime.Now;
                     post.Title = model.Title;
                     post.Categories = model.Categories;
-                    post.CategoryId = model.CategoryId;
 
                     _uow.Complete();
                     return RedirectToAction(nameof(Index));

@@ -39,6 +39,7 @@ namespace Mars
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<IBlogPostRepository, BlogPostRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<IAuthorizationHandler, OwnershipAuthorizationHandler>();
